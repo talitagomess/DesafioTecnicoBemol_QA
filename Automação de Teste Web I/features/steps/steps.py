@@ -1,5 +1,7 @@
-from pickle import FALSE
 from behave import given, when, then
+import time
+
+delay = 10
 
 @given(u'que eu esteja na tela de busca')
 def go_to_page(context):
@@ -15,11 +17,19 @@ def click_search(context):
 
 @then(u'deve-se ser redirecionado para a tela de resultado de busca')
 def sucess_search(context):
-    table = context.browser.find_element_by_xpath('/html/body/main/form/div[1]/div[2]/div/div[3]/table')
-    table_html = table.get_attribute('outerHTML')
-    assert table.is_displayed() == True
-    assert '<th data-th="Logradouro/Nome">Logradouro/Nome</th>' in table_html
-    assert '<th data-th="Logradouro/Nome">Logradouro/Nome</th>' in table_html
-    assert '<th data-th="Bairro/Distrito">Bairro/Distrito</th>' in table_html
-    assert '<th data-th="Localidade/UF">Localidade/UF</th>' in table_html
-    assert '<th data-th="CEP">CEP</th>' in table_html
+    time.sleep(delay) #time to load the page
+    elements = context.browser.find_elements_by_xpath('/html/body/main/form/div[1]/div[2]/div/div[3]/table/tbody/tr/td[1]')
+    html_nome = elements[0].get_attribute('outerHTML')
+    assert '<td data-th="Logradouro/Nome">Rua Miranda Leão</td>' in html_nome
+
+    elements = context.browser.find_elements_by_xpath('/html/body/main/form/div[1]/div[2]/div/div[3]/table/tbody/tr/td[2]')
+    html_district = elements[0].get_attribute('outerHTML')
+    assert '<td data-th="Bairro/Distrito">Centro</td>' in html_district
+
+    elements = context.browser.find_elements_by_xpath('/html/body/main/form/div[1]/div[2]/div/div[3]/table/tbody/tr/td[3]')
+    html_locale = elements[0].get_attribute('outerHTML')
+    assert '<td data-th="Localidade/UF">Manaus/AM</td>' in html_locale
+
+    elements = context.browser.find_elements_by_xpath('/html/body/main/form/div[1]/div[2]/div/div[3]/table/tbody/tr/td[4]')
+    html_CEP = elements[0].get_attribute('outerHTML')
+    assert '<td data-th="CEP">69005-040</td>' in html_CEP
